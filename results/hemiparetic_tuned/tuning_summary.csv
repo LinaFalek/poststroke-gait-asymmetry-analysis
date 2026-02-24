@@ -1,0 +1,15 @@
+patient_id,status,params,param_name,match_quality
+02-P-FN,FAILED,"[97, 33, -311, 27, 10]",Optimised-nelder-mead,14.874
+03-P-PJ,SUCCESS,"[107, 34, -312, 32, 10]",Optimised-nelder-mead,33.789
+05-P-GC,SUCCESS,"[97, 29, -302, 31, 10]",Optimised-nelder-mead,14.993
+08-P-KM,SUCCESS,"[67, 20, -199, 25, 11]",Optimised-nelder-mead,17.188
+10-P-RA,FAILED,"[89, 28, -325, 29, 11]",Optimised-nelder-mead,25.937
+11-P-BK,SUCCESS,"[109, 27, -311, 29, 10]",Optimised-nelder-mead,37.368
+12-P-KH,SUCCESS,"[83, 26, -242, 29, 10]",Optimised-nelder-mead,21.831
+16-P-GT,SUCCESS,"[63, 18, -185, 20, 10]",Optimised-nelder-mead,26.62
+18-P-EE,SUCCESS,"[76, 20, -201, 25, 10]",Optimised-nelder-mead,9.619
+19-P-CR,SUCCESS,"[77, 18, -198, 27, 10]",Optimised-nelder-mead,12.871
+22-P-OA,SUCCESS,"[70, 20, -216, 25, 9]",Optimised-nelder-mead,22.542
+24-P-SA,SUCCESS,"[74, 20, -200, 25, 10]",Optimised-nelder-mead,26.418
+25-P-LS,FAILED,"[98, 30, -303, 30, 10]",Optimised-nelder-mead,66.158
+29-P-DP,SUCCESS,"[75, 20, -210, 26, 9]",Optimised-nelder-mead,14.049

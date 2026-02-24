@@ -1,0 +1,141 @@
+File,Parameter,Mean,Std,Unit
+Bare_fast,WalkingSpeed,0.5877951626313086,0.0,m/s
+Bare_fast,Affected strideLength,0.9548314014935436,0.2133035066261869,m
+Bare_fast,Non-paretic strideLength,0.7973678029634547,0.05576926383196826,m
+Bare_fast,Affected strideTime,1.1400000000000001,0.27562051205718835,s
+Bare_fast,Non-paretic strideTime,1.10625,0.06588680769753096,s
+Bare_fast,Affected stanceTime,0.7371428571428572,0.2494470074460897,s
+Bare_fast,Non-paretic stanceTime,0.6900000000000001,0.019999999999999962,s
+Bare_fast,Affected swingTime,0.37999999999999995,0.06244997998398399,s
+Bare_fast,Non-paretic swingTime,0.3981818181818182,0.03842347767138779,s
+Bare_fast,Affected stanceDuration,65.9599580694236,10.628972968173422,s
+Bare_fast,Non-paretic stanceDuration,63.44597785647281,2.185890526061297,s
+Bare_fast,Affected Ankle maxData_st,9.87544176503067,3.8471690534108167,deg
+Bare_fast,Affected Ankle maxData_sw,7.7047884019194495,4.9359742039507095,deg
+Bare_fast,Affected Ankle minData_st,-5.960559387116807,2.751767187262695,deg
+Bare_fast,Affected Ankle minData_sw,-6.039313990923181,4.896611166505443,deg
+Bare_fast,Affected Knee maxData_st,38.95643882592412,8.160817936437772,deg
+Bare_fast,Affected Knee maxData_sw,25.480654344561806,15.771351330789763,deg
+Bare_fast,Affected Knee minData_st,-8.263791471930475,1.071814432291414,deg
+Bare_fast,Affected Knee minData_sw,-2.3633043187075105,9.297659680462331,deg
+Bare_fast,Affected Hip maxData_st,19.003192836556575,2.159576218740874,deg
+Bare_fast,Affected Hip maxData_sw,19.489385763137914,2.3366784177156132,deg
+Bare_fast,Affected Hip minData_st,-23.013693689106933,1.0750740648380874,deg
+Bare_fast,Affected Hip minData_sw,-10.183101316135023,6.927410712588061,deg
+Bare_fast,Non-paretic Ankle maxData_st,3.200692454761369,1.6552464017333923,deg
+Bare_fast,Non-paretic Ankle maxData_sw,-4.822413341854053,3.194230739511904,deg
+Bare_fast,Non-paretic Ankle minData_st,-10.748191160894686,4.120229006972591,deg
+Bare_fast,Non-paretic Ankle minData_sw,-22.170475175787256,4.0239841786147,deg
+Bare_fast,Non-paretic Knee maxData_st,22.233763354697352,4.316194756409214,deg
+Bare_fast,Non-paretic Knee maxData_sw,52.264695189332166,2.2937148398423646,deg
+Bare_fast,Non-paretic Knee minData_st,-4.751556379844775,1.7514180317021784,deg
+Bare_fast,Non-paretic Knee minData_sw,4.7234125884140745,2.913837271309029,deg
+Bare_fast,Non-paretic Hip maxData_st,3.168915831771433,1.267905896050777,deg
+Bare_fast,Non-paretic Hip maxData_sw,13.268571486996818,1.9914724331379887,deg
+Bare_fast,Non-paretic Hip minData_st,-16.27020550346642,1.3478800756284486,deg
+Bare_fast,Non-paretic Hip minData_sw,-8.501260102645851,2.0608021096549134,deg
+Bare_pref,WalkingSpeed,0.4886183471326751,0.0,m/s
+Bare_pref,Affected strideLength,0.804320611057591,0.11583953498193762,m
+Bare_pref,Non-paretic strideLength,0.7551743864071641,0.019015948016026938,m
+Bare_pref,Affected strideTime,1.2174999999999998,0.1612230043847873,s
+Bare_pref,Non-paretic strideTime,1.17,0.017728105208558383,s
+Bare_pref,Affected stanceTime,0.81125,0.11419751060584214,s
+Bare_pref,Non-paretic stanceTime,0.7288888888888889,0.02571208103423588,s
+Bare_pref,Affected swingTime,0.4033333333333333,0.07365459931328117,s
+Bare_pref,Non-paretic swingTime,0.42999999999999994,0.025495097567963924,s
+Bare_pref,Affected stanceDuration,67.84268831639079,2.753544077442858,s
+Bare_pref,Non-paretic stanceDuration,62.90785642089924,1.5730541602539663,s
+Bare_pref,Affected Ankle maxData_st,5.211875931504275,0.5969324563641017,deg
+Bare_pref,Affected Ankle maxData_sw,12.41731574320579,1.1414202167882634,deg
+Bare_pref,Affected Ankle minData_st,-9.213166577885621,3.1938196323260484,deg
+Bare_pref,Affected Ankle minData_sw,-2.8744642004673904,4.171263287342901,deg
+Bare_pref,Affected Knee maxData_st,25.277749908749055,6.12386322804988,deg
+Bare_pref,Affected Knee maxData_sw,41.638175774650236,1.8666361268280744,deg
+Bare_pref,Affected Knee minData_st,-8.348985545021305,0.45975111842325234,deg
+Bare_pref,Affected Knee minData_sw,5.884564512094985,2.178995602272563,deg
+Bare_pref,Affected Hip maxData_st,14.454662697703748,1.8300763306804588,deg
+Bare_pref,Affected Hip maxData_sw,15.89976777771184,0.9129958848127396,deg
+Bare_pref,Affected Hip minData_st,-23.436182913302392,1.528299434330858,deg
+Bare_pref,Affected Hip minData_sw,-8.42827669275227,2.465693111220443,deg
+Bare_pref,Non-paretic Ankle maxData_st,3.8507477572433944,1.486012328936278,deg
+Bare_pref,Non-paretic Ankle maxData_sw,-5.477459685877931,1.9797715161559175,deg
+Bare_pref,Non-paretic Ankle minData_st,-12.11512368769368,2.589263335570413,deg
+Bare_pref,Non-paretic Ankle minData_sw,-19.01736499367555,3.144483157608746,deg
+Bare_pref,Non-paretic Knee maxData_st,24.19061787584048,2.5018579372000285,deg
+Bare_pref,Non-paretic Knee maxData_sw,51.16231970734217,2.687511095200312,deg
+Bare_pref,Non-paretic Knee minData_st,-3.8763912493529875,1.7132290381434845,deg
+Bare_pref,Non-paretic Knee minData_sw,5.1745445051812595,2.0239241528960967,deg
+Bare_pref,Non-paretic Hip maxData_st,0.7708299068646058,3.2861930209433075,deg
+Bare_pref,Non-paretic Hip maxData_sw,11.859066356027386,0.46490299035465826,deg
+Bare_pref,Non-paretic Hip minData_st,-19.05908441649932,1.3346357799410007,deg
+Bare_pref,Non-paretic Hip minData_sw,-11.792573009559883,1.8959861716680488,deg
+Shoe_fast,WalkingSpeed,0.545858491858002,0.0,m/s
+Shoe_fast,Affected strideLength,0.8746204558725206,0.19130405766775493,m
+Shoe_fast,Non-paretic strideLength,0.7670605092003585,0.09363460619641138,m
+Shoe_fast,Affected strideTime,1.01,0.2858671019897184,s
+Shoe_fast,Non-paretic strideTime,1.0950000000000002,0.023904572186687848,s
+Shoe_fast,Affected stanceTime,0.6316666666666667,0.301822243492203,s
+Shoe_fast,Non-paretic stanceTime,0.6788888888888889,0.012692955176439811,s
+Shoe_fast,Affected swingTime,0.37833333333333335,0.045350486950711644,s
+Shoe_fast,Non-paretic swingTime,0.39899999999999997,0.04067486256208427,s
+Shoe_fast,Affected stanceDuration,62.68344367903452,14.400356340847518,s
+Shoe_fast,Non-paretic stanceDuration,62.73841649797105,2.3757591634124404,s
+Shoe_fast,Affected Ankle maxData_st,8.875800118625243,5.030737769310434,deg
+Shoe_fast,Affected Ankle maxData_sw,10.614477125585722,3.442340641587413,deg
+Shoe_fast,Affected Ankle minData_st,-5.346503537313132,1.9875312758485446,deg
+Shoe_fast,Affected Ankle minData_sw,-4.481428361769983,3.6317795274710614,deg
+Shoe_fast,Affected Knee maxData_st,37.222504915612355,9.37414883288244,deg
+Shoe_fast,Affected Knee maxData_sw,37.549399888596916,19.943984790223855,deg
+Shoe_fast,Affected Knee minData_st,-5.205049151820429,0.7241686022865613,deg
+Shoe_fast,Affected Knee minData_sw,1.112930376786845,4.2555667410233715,deg
+Shoe_fast,Affected Hip maxData_st,15.455069568867893,8.205940942442878,deg
+Shoe_fast,Affected Hip maxData_sw,19.77097200567013,2.78939512372327,deg
+Shoe_fast,Affected Hip minData_st,-4.189996394288086,1.8094965581874345,deg
+Shoe_fast,Affected Hip minData_sw,3.1070046845428148,5.902496371226259,deg
+Shoe_fast,Non-paretic Ankle maxData_st,2.4740350443643955,1.3644415299356087,deg
+Shoe_fast,Non-paretic Ankle maxData_sw,-3.1351157927993323,0.4874211806327801,deg
+Shoe_fast,Non-paretic Ankle minData_st,-12.284466585281411,1.6438065193879035,deg
+Shoe_fast,Non-paretic Ankle minData_sw,-21.317861451921353,3.390075002464223,deg
+Shoe_fast,Non-paretic Knee maxData_st,30.620531564052335,2.3224629308450857,deg
+Shoe_fast,Non-paretic Knee maxData_sw,54.2328222862998,1.812037958940523,deg
+Shoe_fast,Non-paretic Knee minData_st,-1.5952791181525052,1.0940012786282316,deg
+Shoe_fast,Non-paretic Knee minData_sw,5.40230307441853,2.7915807979999667,deg
+Shoe_fast,Non-paretic Hip maxData_st,24.743996995640025,2.7334996080319476,deg
+Shoe_fast,Non-paretic Hip maxData_sw,35.327460031179356,1.4674850322685444,deg
+Shoe_fast,Non-paretic Hip minData_st,-17.336229233100937,0.9958191543787591,deg
+Shoe_fast,Non-paretic Hip minData_sw,-1.647200548494703,4.97963188806509,deg
+Shoe_pref,WalkingSpeed,0.5123474055875278,0.0,m/s
+Shoe_pref,Affected strideLength,0.7351355991065052,0.09613065904799893,m
+Shoe_pref,Non-paretic strideLength,0.7446265178641073,0.04917375672924123,m
+Shoe_pref,Affected strideTime,1.15625,0.11096170510586073,s
+Shoe_pref,Non-paretic strideTime,1.0733333333333333,0.1894729532149642,s
+Shoe_pref,Affected stanceTime,0.78125,0.1094711312238463,s
+Shoe_pref,Non-paretic stanceTime,0.7133333333333333,0.1864805619897152,s
+Shoe_pref,Affected swingTime,0.3442857142857143,0.013972762620115426,s
+Shoe_pref,Non-paretic swingTime,0.35153846153846147,0.05610201331000428,s
+Shoe_pref,Affected stanceDuration,69.18588521851451,2.925529454463568,s
+Shoe_pref,Non-paretic stanceDuration,67.55609918148697,8.620394418696247,s
+Shoe_pref,Affected Ankle maxData_st,3.5042881782352353,1.4101459755071784,deg
+Shoe_pref,Affected Ankle maxData_sw,11.845333825917146,1.2109522037594145,deg
+Shoe_pref,Affected Ankle minData_st,-5.556175924156879,3.4319587300206935,deg
+Shoe_pref,Affected Ankle minData_sw,-4.76564233253612,4.75432924820825,deg
+Shoe_pref,Affected Knee maxData_st,32.679678442584596,3.3933974228827206,deg
+Shoe_pref,Affected Knee maxData_sw,45.77527256828884,2.7182654464955878,deg
+Shoe_pref,Affected Knee minData_st,-2.2277872443545323,2.143998219377686,deg
+Shoe_pref,Affected Knee minData_sw,7.323111174842122,1.5481872250676927,deg
+Shoe_pref,Affected Hip maxData_st,20.942059542197118,3.4090364933776693,deg
+Shoe_pref,Affected Hip maxData_sw,23.672592272568387,2.3095529078754864,deg
+Shoe_pref,Affected Hip minData_st,-15.639914496768808,2.6058848059712476,deg
+Shoe_pref,Affected Hip minData_sw,2.557782789839726,1.32298264401426,deg
+Shoe_pref,Non-paretic Ankle maxData_st,3.1347698882712676,1.3050267493851444,deg
+Shoe_pref,Non-paretic Ankle maxData_sw,-1.8369867358919607,2.5834943827753625,deg
+Shoe_pref,Non-paretic Ankle minData_st,-7.880150756162993,5.322278680236372,deg
+Shoe_pref,Non-paretic Ankle minData_sw,-13.096656869129564,5.279096088354781,deg
+Shoe_pref,Non-paretic Knee maxData_st,25.867625081974552,2.6493557686786455,deg
+Shoe_pref,Non-paretic Knee maxData_sw,42.3387926356176,15.802289898396912,deg
+Shoe_pref,Non-paretic Knee minData_st,-2.308183268852801,2.5681242642356734,deg
+Shoe_pref,Non-paretic Knee minData_sw,10.245155354361867,12.331449333062414,deg
+Shoe_pref,Non-paretic Hip maxData_st,9.883460381184973,8.356819916066947,deg
+Shoe_pref,Non-paretic Hip maxData_sw,17.647630155973378,2.4000787894894944,deg
+Shoe_pref,Non-paretic Hip minData_st,-11.997330277683016,2.1887590684593077,deg
+Shoe_pref,Non-paretic Hip minData_sw,-2.8279792539492146,3.0675249378199507,deg

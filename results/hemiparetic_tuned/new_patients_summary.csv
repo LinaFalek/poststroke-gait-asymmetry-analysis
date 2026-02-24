@@ -1,0 +1,13 @@
+patient_id,status,param_name,params,match_quality,source
+01-P-AR,SUCCESS,Optimised-nelder-mead,"[70, 20, -204, 26, 10]",18.304,csv
+04-P-CA,SUCCESS,Optimised-nelder-mead,"[96, 37, -333, 38, 9]",29.57,csv
+06-P-PH,SUCCESS,Optimised-nelder-mead,"[71, 20, -200, 25, 10]",12.344,csv
+07-P-KV,SUCCESS,Optimised-nelder-mead,"[62, 18, -176, 19, 11]",14.706,csv
+09-P-TF,SUCCESS,Optimised-nelder-mead,"[140, 37, -321, 27, 10]",46.638,csv
+13-P-CD,SUCCESS,Optimised-nelder-mead,"[62, 19, -188, 20, 10]",18.723,csv
+15-P-TS,SUCCESS,Optimised-nelder-mead,"[60, 19, -178, 21, 10]",50.254,csv
+17-P-MA,SUCCESS,Optimised-nelder-mead,"[84, 25, -250, 30, 10]",10.131,csv
+20-P-NP,SUCCESS,Optimised-nelder-mead,"[93, 28, -281, 28, 10]",24.631,csv
+21-P-NP,SUCCESS,Optimised-nelder-mead,"[63, 20, -207, 24, 10]",28.804,csv
+23-P-GF,SUCCESS,Optimised-nelder-mead,"[123, 35, -327, 29, 11]",30.514,csv
+26-P-AM,SUCCESS,Optimised-nelder-mead,"[67, 16, -174, 23, 10]",45.191,csv
