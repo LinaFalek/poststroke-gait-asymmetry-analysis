@@ -1,16 +1,3 @@
-"""
-Per-Condition Swing Parameter Tuning — FAST PARALLEL VERSION
-=============================================================
-Same as tune_per_condition.py but:
-  - Runs patients in parallel (multiprocessing.Pool, all CPU cores)
-  - N_RANDOM_STARTS = 1  (warm start from fine_params is sufficient)
-  - Estimated time: ~10-15 min vs ~90 min for the serial version
-
-Usage:
-    python scripts/tune_per_condition_fast.py          # all patients
-    python scripts/tune_per_condition_fast.py 01-P-AR  # specific patients
-"""
-
 import sys
 import ast
 import warnings
@@ -40,7 +27,7 @@ TRIAL_TO_CAL = {
 
 PARAM_BOUNDS    = [(50, 200), (10, 80), (-500, -100), (15, 80), (5, 30)]
 DEFAULT_PARAMS  = [100, 30, -300, 30, 10]
-N_RANDOM_STARTS = 1   # reduced from 4 — warm start dominates anyway
+N_RANDOM_STARTS = 1
 
 GLOBAL_REFS: dict = {}
 
@@ -54,7 +41,6 @@ def _normalize_param_name(s: str) -> str:
 
 
 def compute_global_refs() -> dict:
-    """Load every MATLAB result CSV and compute mean |value| per parameter."""
     rows = []
     for patient_dir in MATLAB_RESULTS.iterdir():
         if not patient_dir.is_dir():
@@ -187,7 +173,6 @@ def tune_condition(trials_dict, indices_dict, matlab_df, trial_filter, warm_star
 
 
 def _worker(args):
-    """Process one patient. Returns (patient_id, result_dict, log_lines)."""
     patient_id, existing_params = args
     log = []
 
@@ -224,7 +209,6 @@ def _worker(args):
         params, error, n_ev = tune_condition(
             trials_dict, indices_dict, matlab_df, trial_filter, warm_start=warm)
 
-        # Fallback: if warm start is better, keep it
         if warm is not None and error is not None:
             warm_err = compute_error(
                 run_pipeline(trials_dict, indices_dict, warm, trial_filter), matlab_df)
