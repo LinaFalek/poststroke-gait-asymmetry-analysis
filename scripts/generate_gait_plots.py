@@ -1,29 +1,10 @@
-"""
-Batch Gait Plots - All Patients / All RDVs / All Trials
-=========================================================
-
-Folder structure:
-    output/figures/all_patients/{patient_id}/{RDV}/{trial}/
-        01_joint_angles.png       Hip/Knee/Ankle gait cycles, Affected vs Non-paretic
-        02_foot_acceleration.png  Foot acceleration norm + swing detection phases
-        03_spatiotemporal.png     Spatiotemporal parameters for this trial
-
-Usage:
-    python scripts/plot_all_patients.py                        # all
-    python scripts/plot_all_patients.py 01-P-AR                # one patient
-    python scripts/plot_all_patients.py 01-P-AR RDV1           # one patient + RDV
-    python scripts/plot_all_patients.py 01-P-AR RDV1 Bare_pref # one specific
-    python scripts/plot_all_patients.py --force                 # regenerate all
-
-Skips figures that already exist (safe to re-run).
-"""
 
 import sys
 import ast
 import warnings
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
-warnings.filterwarnings('ignore')   # suppress numpy std warnings
+warnings.filterwarnings('ignore')
 
 import numpy as np
 import pandas as pd
@@ -47,26 +28,22 @@ TRIAL_TO_CAL   = {
     'Shoe_fast': 'Shoe_calibration', 'Shoe_pref': 'Shoe_calibration',
 }
 
-COL_AF = '#c0392b'   # red — affected
-COL_NF = '#2980b9'   # blue — non-paretic
+COL_AF = '#c0392b'
+COL_NF = '#2980b9'
 
 BARE_TRIALS = {'Bare_fast', 'Bare_pref'}
 SHOE_TRIALS = {'Shoe_fast', 'Shoe_pref'}
 CONDITION_PARAMS_PATH = TUNED_DIR / 'condition_params.csv'
 
 
-# ── data helpers ─────────────────────────────────────────────────────────────
 
 def load_all_tuned_params():
     """Load per-condition params if available, else fall back to fine_params."""
-    # Always load the single-condition fallback
     df_fine = pd.read_csv(TUNED_DIR / 'fine_tuning_summary.csv')
     fine = {row['patient_id']: ast.literal_eval(row['fine_params'])
             for _, row in df_fine.iterrows()}
 
-    # Try to load per-condition params
     if not CONDITION_PARAMS_PATH.exists():
-        # Return (fine, fine) for bare/shoe — same fallback for both
         return {pid: {'bare': p, 'shoe': p, 'fallback': p}
                 for pid, p in fine.items()}
 
@@ -89,7 +66,6 @@ def load_all_tuned_params():
             'shoe':     shoe_p if shoe_p is not None else fb,
             'fallback': fb,
         }
-    # For patients not in condition_params.csv, fall back to fine
     for pid, p in fine.items():
         if pid not in result:
             result[pid] = {'bare': p, 'shoe': p, 'fallback': p}
@@ -102,7 +78,7 @@ def get_trial_params(params_entry, trial_name):
         if trial_name in BARE_TRIALS:
             return params_entry['bare']
         return params_entry['shoe']
-    return params_entry  # legacy plain list
+    return params_entry
 
 
 def load_ok_pairs():
@@ -135,7 +111,6 @@ def iqr_filter(data):
     return data[mask]
 
 
-# ── Figure 1: Joint angle gait cycles ────────────────────────────────────────
 
 def plot_joint_angles(result, patient_id, rdv, trial_name, params, out_path):
     """
@@ -194,7 +169,6 @@ def plot_joint_angles(result, patient_id, rdv, trial_name, params, out_path):
     plt.close(fig)
 
 
-# ── Figure 2: Foot acceleration ("force") + swing detection ──────────────────
 
 def plot_foot_acceleration(result, patient_id, rdv, trial_name, params, out_path):
     """
@@ -210,7 +184,7 @@ def plot_foot_acceleration(result, patient_id, rdv, trial_name, params, out_path
     fa_acc = dbg['foot_acc']
     t_vec  = dbg['time_vec'] / 1000.0   # ms -> s
 
-    WIN = min(len(t_vec), 2000)   # ~20 s @ 100 Hz
+    WIN = min(len(t_vec), 2000)
     t   = t_vec[:WIN]
 
     def norm2d(arr):
@@ -240,7 +214,6 @@ def plot_foot_acceleration(result, patient_id, rdv, trial_name, params, out_path
         fontsize=11, fontweight='bold'
     )
 
-    # --- Affected foot acceleration ---
     ax = axes[0]
     ax.plot(t, af_acc, color=COL_AF, linewidth=0.8)
     shade(ax, sw_af, COL_AF)
@@ -248,7 +221,6 @@ def plot_foot_acceleration(result, patient_id, rdv, trial_name, params, out_path
     ax.set_title('Affected foot — acceleration norm  (shading = swing phase)')
     ax.grid(alpha=0.3)
 
-    # --- Affected swing signal ---
     ax = axes[1]
     ax.fill_between(t, sw_af.astype(float), step='post',
                     color=COL_AF, alpha=0.6)
@@ -258,7 +230,6 @@ def plot_foot_acceleration(result, patient_id, rdv, trial_name, params, out_path
     ax.set_title('Affected leg — swing detection signal')
     ax.grid(alpha=0.3)
 
-    # --- Non-paretic foot acceleration ---
     ax = axes[2]
     ax.plot(t, nf_acc, color=COL_NF, linewidth=0.8)
     shade(ax, sw_nf, COL_NF)
@@ -266,7 +237,6 @@ def plot_foot_acceleration(result, patient_id, rdv, trial_name, params, out_path
     ax.set_title('Non-paretic foot — acceleration norm  (shading = swing phase)')
     ax.grid(alpha=0.3)
 
-    # --- Non-paretic swing signal ---
     ax = axes[3]
     ax.fill_between(t, sw_nf.astype(float), step='post',
                     color=COL_NF, alpha=0.6)
@@ -281,8 +251,6 @@ def plot_foot_acceleration(result, patient_id, rdv, trial_name, params, out_path
     fig.savefig(out_path, dpi=120, bbox_inches='tight')
     plt.close(fig)
 
-
-# ── Figure 3: Spatiotemporal parameters ──────────────────────────────────────
 
 def plot_spatiotemporal(result, patient_id, rdv, trial_name, params, out_path):
     """
@@ -353,8 +321,6 @@ def plot_spatiotemporal(result, patient_id, rdv, trial_name, params, out_path):
     plt.close(fig)
 
 
-# ── per-trial processing ──────────────────────────────────────────────────────
-
 def process_one_trial(patient_id, rdv, trial_name, trials, indices, params, force=False):
     """
     Generate 3 figures for one patient/RDV/trial.
@@ -386,8 +352,6 @@ def process_one_trial(patient_id, rdv, trial_name, trials, indices, params, forc
     except Exception as e:
         return f'err:{e}'
 
-
-# ── main batch loop ───────────────────────────────────────────────────────────
 
 def main():
     force = '--force' in sys.argv

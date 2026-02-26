@@ -173,7 +173,6 @@ def process_gait_data(calib_data, calib_indices, walk_data, walk_indices, swing_
     fc_qua = 10
     fc_imu = 10
 
-    # 1. Data Preparation
     # Handle both array and scalar index types
     calib_start = calib_indices['indexStart'][0] if isinstance(calib_indices['indexStart'], np.ndarray) else calib_indices['indexStart']
     calib_end = calib_indices['indexEnd'][0] if isinstance(calib_indices['indexEnd'], np.ndarray) else calib_indices['indexEnd']
@@ -189,7 +188,7 @@ def process_gait_data(calib_data, calib_indices, walk_data, walk_indices, swing_
     quat = [calib_data['cal'][i]['quat'] for i in range(7)]
     quat = filter_quat_lowpass(quat, fs, fc_qua, 6, True)
 
-    # Walking Data - keep UNFILTERED quaternions for gait parameters (like MATLAB does)
+    # Walking data (unfiltered quaternions)
     walk_data_unfiltered = {'cal': []}
     for i in range(7):
         sensor_data = {
@@ -208,7 +207,7 @@ def process_gait_data(calib_data, calib_indices, walk_data, walk_indices, swing_
     walk_quat_filt = filter_quat_lowpass(walk_quat, fs, fc_qua, 6, True)
     walk_gyr_filt = filter_quat_lowpass(walk_gyr, fs, fc_imu, 4, False)
 
-    # Create filtered data structure (for swing detection and joint angles)
+    # Filtered data structure
     walk_data_filtered = {'cal': []}
     for i in range(7):
         sensor_data = {
@@ -218,12 +217,12 @@ def process_gait_data(calib_data, calib_indices, walk_data, walk_indices, swing_
         }
         walk_data_filtered['cal'].append(sensor_data)
 
-    # 2. Calibration (Hybrid: Static Gravity + Walking PCA)
+    # Calibration
     R_SB = []
     for i in range(7):
         R_SB.append(calibration_z(quat[i], calib_idx, walk_gyr_filt[i]))
 
-    # 3. Joint Angle Calculation (uses FILTERED quaternions)
+    # Joint angle calculation
     seq = 'ZXZ'
     r, p, y = [], [], []
 
@@ -258,7 +257,7 @@ def process_gait_data(calib_data, calib_indices, walk_data, walk_indices, swing_
         'nh': -tar[5]   # Non-affected hip
     }
 
-    # 4. Swing Detection & Step Timing (uses FILTERED data)
+    # Swing detection
     if swing_params is None:
         set_params = [100, 30, -300, 30, 10]  # Default parameters
     else:
@@ -283,7 +282,7 @@ def process_gait_data(calib_data, calib_indices, walk_data, walk_indices, swing_
 
     swing = {'af': Sw1, 'nf': Sw2}
 
-    # 5. Gait Parameters & Characteristics (uses UNFILTERED quaternions like MATLAB!)
+    # Gait parameters and characteristics
     gait_out = extraction_gait_parm_modified(step_time_data, walk_data_unfiltered, time_vec, swing)
 
     gait_char = {
@@ -297,7 +296,7 @@ def process_gait_data(calib_data, calib_indices, walk_data, walk_indices, swing_
 
     filtered_gait_parm = process_struct_fields(gait_out)
 
-    # 6. Cyclic Data Extraction
+    # Cyclic data
     mv = 2
     St_dur_af = filtered_gait_parm['af']['stanceDuration']['meanValue']
     St_dur_nf = filtered_gait_parm['nf']['stanceDuration']['meanValue']

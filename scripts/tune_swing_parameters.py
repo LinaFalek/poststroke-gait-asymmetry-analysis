@@ -42,9 +42,6 @@ PARAM_BOUNDS    = [(50, 200), (10, 80), (-500, -100), (15, 80), (5, 30)]
 DEFAULT_PARAMS  = [100, 30, -300, 30, 10]
 N_RANDOM_STARTS = 1   # reduced from 4 — warm start dominates anyway
 
-# Global parameter reference scales — computed once from ALL patients' MATLAB data.
-# Used as fixed denominators in the error metric so no single near-zero value
-# can inflate the error. Populated in main() before spawning workers.
 GLOBAL_REFS: dict = {}
 
 
@@ -78,8 +75,6 @@ def compute_global_refs() -> dict:
                     .to_dict())
     return refs
 
-
-# ── pipeline ──────────────────────────────────────────────────────────────────
 
 def clip_to_bounds(x):
     return np.array([np.clip(x[i], PARAM_BOUNDS[i][0], PARAM_BOUNDS[i][1])
@@ -142,11 +137,7 @@ def compute_error(py_df, matlab_df):
     if len(merged) == 0:
         return None
 
-    # Normalize by global reference scale (mean |value| across ALL patients for
-    # each parameter). This gives a stable denominator regardless of individual
-    # trial values, so near-zero angles never inflate the error.
     param_ref = merged['Parameter'].map(GLOBAL_REFS)
-    # Fallback: if a parameter isn't in GLOBAL_REFS, use its own absolute mean
     fallback  = merged.groupby('Parameter')['Mean_mat'].transform(
                     lambda x: x.abs().mean())
     param_ref = param_ref.fillna(fallback).clip(lower=1e-6)
@@ -194,8 +185,6 @@ def tune_condition(trials_dict, indices_dict, matlab_df, trial_filter, warm_star
 
     return best_params, best_error, n_evals[0]
 
-
-# ── worker function (called in subprocess) ────────────────────────────────────
 
 def _worker(args):
     """Process one patient. Returns (patient_id, result_dict, log_lines)."""
@@ -252,8 +241,6 @@ def _worker(args):
     return patient_id, results, log
 
 
-# ── main ──────────────────────────────────────────────────────────────────────
-
 def load_existing_params():
     path = OUTPUT_DIR / 'fine_tuning_summary.csv'
     if not path.exists():
@@ -273,7 +260,6 @@ def main():
     cli_patients = sys.argv[1:]
     existing     = load_existing_params()
 
-    # Compute global reference scales before spawning workers
     print('Computing global parameter reference scales from MATLAB data...')
     GLOBAL_REFS = compute_global_refs()
     print(f'  {len(GLOBAL_REFS)} parameters indexed.\n')

@@ -1,14 +1,3 @@
-"""
-Data Loader
-===========
-
-Unified loader for gait data from (in priority order):
-1. Consolidated CSV files (data/processed/{patient}/RDV1/{trial}.csv)
-2. outputData.mat files (pre-compiled MATLAB format)
-3. Raw .txt sensor files (7 sensor files per trial)
-
-All sources produce identical data for the processing pipeline.
-"""
 
 import numpy as np
 import pandas as pd
@@ -44,20 +33,7 @@ def load_sensor_from_txt(txt_file):
 
 
 def load_trial_from_txt(trial_dir, trial_name):
-    """
-    Load one trial's data from 7 sensor .txt files
 
-    Parameters:
-    -----------
-    trial_dir : Path
-        Directory containing the 7 .txt files
-    trial_name : str
-        Name of the trial (e.g. 'Bare_fast')
-
-    Returns:
-    --------
-    dict with 'Name' and 'cal' (list of 7 sensor dicts)
-    """
     trial_dir = Path(trial_dir)
     txt_files = sorted(trial_dir.glob('*.txt'))
 
@@ -102,12 +78,7 @@ def apply_sensor_reorder(trial, new_order=SENSOR_REORDER):
 
 
 def load_trial_from_csv(csv_path, trial_name):
-    """
-    Load one trial from a consolidated CSV file.
 
-    The CSV has columns: sensor, sample, quat_w/x/y/z, acc_x/y/z, etc.
-    with all 7 sensors stacked.
-    """
     df = pd.read_csv(csv_path)
     cal_data = []
 
@@ -125,29 +96,7 @@ def load_trial_from_csv(csv_path, trial_name):
 
 
 def load_patient_data(patient_id, rdv='RDV1', base_path=None):
-    """
-    Load all trials for a patient from any available source.
 
-    Priority: CSV (fastest) > outputData.mat > raw .txt files
-
-    Parameters:
-    -----------
-    patient_id : str
-        Patient identifier (e.g. '01-P-AR')
-    rdv : str
-        Visit identifier (e.g. 'RDV1')
-    base_path : Path
-        Base path containing Kinematics folder
-
-    Returns:
-    --------
-    re_output : list of 6 dicts (one per trial, sensors in body-position order)
-    source : str ('csv', 'mat', or 'txt')
-
-    Raises:
-    -------
-    FileNotFoundError if no data source is available
-    """
     if base_path is None:
         base_path = Path(__file__).parent.parent / 'Kinematics'
 
@@ -186,23 +135,14 @@ def load_patient_data(patient_id, rdv='RDV1', base_path=None):
             f"no CSV, outputData.mat, or txt files"
         )
 
-    # Apply sensor reorder (device order -> body position order)
+    # Apply sensor reorder
     re_output = [apply_sensor_reorder(t) for t in trials]
 
     return re_output, source
 
 
 def load_index_files(patient_id, rdv='RDV1', base_path=None):
-    """
-    Load all 6 index files for a patient.
 
-    Priority: CSV (data/processed/) > .mat files (Kinematics/)
-
-    Returns:
-    --------
-    indices : dict mapping trial_name -> index_data (or None if missing)
-        Each index_data has 'indexStart' and 'indexEnd' keys.
-    """
     if base_path is None:
         base_path = Path(__file__).parent.parent / 'Kinematics'
 
@@ -211,7 +151,6 @@ def load_index_files(patient_id, rdv='RDV1', base_path=None):
 
     indices = {}
 
-    # Try CSV first
     if csv_path.exists():
         df = pd.read_csv(csv_path)
         for trial in TRIAL_NAMES:
@@ -219,8 +158,7 @@ def load_index_files(patient_id, rdv='RDV1', base_path=None):
             if len(tdf) == 0:
                 indices[trial] = None
                 continue
-            # For walking trials (section 0 only), use first section
-            # For calibration trials with multiple sections, use first section
+
             row = tdf[tdf['section'] == 0].iloc[0]
             indices[trial] = {
                 'indexStart': int(row['index_start']),
@@ -228,7 +166,6 @@ def load_index_files(patient_id, rdv='RDV1', base_path=None):
             }
         return indices
 
-    # Fall back to .mat files
     for search_dir in [
         base_path / 'Dataset' / 'hemiparetic' / patient_id / rdv,
         base_path / 'Dataset' / 'hemiparetic' / 'Ne pas utiliser' / patient_id / rdv
@@ -243,7 +180,6 @@ def load_index_files(patient_id, rdv='RDV1', base_path=None):
                 mat = sio.loadmat(str(idx_file), simplify_cells=True)
                 indices[trial] = mat
 
-    # Fill missing trials with None
     for trial in TRIAL_NAMES:
         if trial not in indices:
             indices[trial] = None
@@ -252,13 +188,7 @@ def load_index_files(patient_id, rdv='RDV1', base_path=None):
 
 
 def check_patient_availability(patient_id, rdv='RDV1', base_path=None):
-    """
-    Check what data is available for a patient without loading it.
 
-    Returns:
-    --------
-    dict with keys: has_mat, has_txt, has_full_txt, has_indices, processable
-    """
     if base_path is None:
         base_path = Path(__file__).parent.parent / 'Kinematics'
 

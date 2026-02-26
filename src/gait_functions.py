@@ -1,7 +1,4 @@
-"""
-Gait Analysis Functions - Python Implementation
-Converted from MATLAB code for kinematic gait analysis using IMU sensors
-"""
+
 
 import numpy as np
 from scipy.signal import butter, filtfilt
@@ -118,8 +115,6 @@ def filter_quat_lowpass(data, fs, fc, order=4, is_quat=None):
     Wn = fc / (fs/2)
     b, a = butter(order // 2, Wn, 'low')
 
-    # Apply filter with MATLAB-compatible padding
-    # MATLAB's filtfilt uses specific padding that we need to match
     data_filt = filtfilt(b, a, data, axis=0, padtype='odd', padlen=3*(max(len(b), len(a))-1))
 
     # Re-normalize quaternions
@@ -148,7 +143,7 @@ def calibration_z(static_quat_data, calib_intervals, walk_gyro):
     calib_quat : Rotation object
         Calibration quaternion (sensor to body frame)
     """
-    # 1. Y-axis (Gravity) estimation from static data
+    # Gravity axis from static calibration
     q_static_segment = static_quat_data[calib_intervals[0, 0]:calib_intervals[0, 1], :]
     qg_S = meanquat(q_static_segment)
     R_sw = Rotation.from_quat([qg_S[1], qg_S[2], qg_S[3], qg_S[0]]).as_matrix()
@@ -157,7 +152,7 @@ def calibration_z(static_quat_data, calib_intervals, walk_gyro):
     Y_A = np.linalg.inv(R_sw) @ np.array([0, 0, 1])
     Y_A = Y_A / np.linalg.norm(Y_A)
 
-    # 2. Z-axis (Rotation) estimation using PCA on walking gyro data
+    # Rotation axis from PCA on walking gyro
     pca = PCA(n_components=3)
     pca.fit(walk_gyro)
     Z_A = pca.components_[0, :]
@@ -168,11 +163,11 @@ def calibration_z(static_quat_data, calib_intervals, walk_gyro):
         Z_A = np.array([0, 1, 0])
     Z_A = Z_A / np.linalg.norm(Z_A)
 
-    # 3. Force Z-axis sign (sensor Y component should be negative)
+    # Force Z-axis sign
     if Z_A[1] < 0:
         Z_A = -Z_A
 
-    # 4. Complete coordinate system (X = Y cross Z)
+    # Complete coordinate system
     X_A = np.cross(Y_A, Z_A)
     X_A = X_A / np.linalg.norm(X_A)
     Z_A = np.cross(X_A, Y_A)
