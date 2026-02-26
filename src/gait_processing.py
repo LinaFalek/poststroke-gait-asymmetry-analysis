@@ -1,36 +1,12 @@
-"""
-Main Gait Processing Functions
-"""
 
 import numpy as np
 from .gait_functions import *
 
 
 def extraction_gait_parm_modified(step_time_data, data, time_vec, swing):
-    """
-    Calculate gait parameters for both affected and non-affected legs
-
-    Parameters:
-    -----------
-    step_time_data : dict
-        Contains 'af' and 'nf' step timing arrays
-    data : dict
-        Sensor data structure
-    time_vec : array
-        Time vector in milliseconds
-    swing : dict
-        Swing phase signals for 'af' and 'nf'
-
-    Returns:
-    --------
-    out : dict
-        Gait parameters including walking speed and leg-specific metrics
-    """
-    # Calculate time intervals (dt = 10 ms)
     dT = np.ones(len(time_vec)) * 0.01
 
-    # Compute overall walking speed from waist sensor
-    waist_sensor = data['cal'][6]  # Index 6 for waist (0-indexed)
+    waist_sensor = data['cal'][6]
     pos_wa = np.array([0.0, 0.0])
     vel_wa = np.array([0.0, 0.0])
 
@@ -44,10 +20,8 @@ def extraction_gait_parm_modified(step_time_data, data, time_vec, swing):
     totalTime = (time_vec[-1] - time_vec[0]) / 1000
     walkingSpeed_overall = np.linalg.norm(pos_wa) / totalTime
 
-    # Offset correction for step length
     offset = 0.25
 
-    # Compute parameters for affected and non-affected legs
     af_params = compute_gait_params(
         data['cal'][0], step_time_data['af'], time_vec, swing['af'], dT, offset
     )
@@ -65,29 +39,6 @@ def extraction_gait_parm_modified(step_time_data, data, time_vec, swing):
 
 
 def compute_gait_params(sensor, step_data, time_vec, swing_signal, dT, offset):
-    """
-    Calculate gait parameters from sensor data over each step
-
-    Parameters:
-    -----------
-    sensor : dict
-        Sensor data with quat, acc fields
-    step_data : array
-        Nx3 matrix [stanceStart, stanceEnd, swingEnd]
-    time_vec : array
-        Time vector in milliseconds
-    swing_signal : array
-        Binary swing phase signal
-    dT : array
-        Time intervals in seconds
-    offset : float
-        Offset for step length (meters)
-
-    Returns:
-    --------
-    gait_params : dict
-        Stride length, time, stance/swing durations
-    """
     N = step_data.shape[0]
 
     step_length = np.zeros(N)
@@ -101,12 +52,10 @@ def compute_gait_params(sensor, step_data, time_vec, swing_signal, dT, offset):
         idx_stance_end = int(step_data[i, 1])
         idx_swing_end = int(step_data[i, 2])
 
-        # Calculate time durations
         strideT = (time_vec[idx_swing_end] - time_vec[idx_start]) / 1000
         stanceT = (time_vec[idx_stance_end] - time_vec[idx_start]) / 1000
         swingT = (time_vec[idx_swing_end] - time_vec[idx_stance_end]) / 1000
 
-        # Initialize position and velocity
         pos = np.array([0.0, 0.0])
         vel = np.array([0.0, 0.0])
 
@@ -115,20 +64,15 @@ def compute_gait_params(sensor, step_data, time_vec, swing_signal, dT, offset):
             rot = quat2rot(sensor['quat'][j, :])
             acc_corr = (rot @ sensor['acc'][j, :] - np.array([0, 0, 9.8]))
 
-            # Update velocity
             vel = vel + acc_corr[0:2] * dt
 
-            # Reset velocity during stance
             if swing_signal[j] == 0:
                 vel = np.array([0.0, 0.0])
 
-            # Update position
             pos = pos + vel * dt
 
-        # Final position update
         pos = pos + vel * dt
 
-        # Store parameters
         step_length[i] = np.linalg.norm(pos) + offset
         stride_time[i] = strideT
         stance_time[i] = stanceT
@@ -147,33 +91,10 @@ def compute_gait_params(sensor, step_data, time_vec, swing_signal, dT, offset):
 
 
 def process_gait_data(calib_data, calib_indices, walk_data, walk_indices, swing_params=None, return_debug=False):
-    """
-    Main processing function for gait data
-
-    Parameters:
-    -----------
-    calib_data : dict
-        Calibration data structure
-    calib_indices : dict
-        Calibration index ranges
-    walk_data : dict
-        Walking data structure
-    walk_indices : dict
-        Walking index ranges
-    swing_params : list, optional
-        Swing detection parameters [Dh, Dl, Ds, Tm, Td]
-        Default: [100, 30, -300, 30, 10]
-
-    Returns:
-    --------
-    output : dict
-        Processed gait parameters, characteristics, and cyclic data
-    """
     fs = 100
     fc_qua = 10
     fc_imu = 10
 
-    # Handle both array and scalar index types
     calib_start = calib_indices['indexStart'][0] if isinstance(calib_indices['indexStart'], np.ndarray) else calib_indices['indexStart']
     calib_end = calib_indices['indexEnd'][0] if isinstance(calib_indices['indexEnd'], np.ndarray) else calib_indices['indexEnd']
     calib_idx = np.array([[calib_start, calib_end]])
@@ -198,21 +119,18 @@ def process_gait_data(calib_data, calib_indices, walk_data, walk_indices, swing_
         }
         walk_data_unfiltered['cal'].append(sensor_data)
 
-    # Extract for filtering
     walk_quat = [walk_data_unfiltered['cal'][i]['quat'] for i in range(7)]
     walk_acc = [walk_data_unfiltered['cal'][i]['acc'] for i in range(7)]
     walk_gyr = [walk_data_unfiltered['cal'][i]['gyr'] for i in range(7)]
 
-    # Filter quaternions and gyro (for joint angles only)
     walk_quat_filt = filter_quat_lowpass(walk_quat, fs, fc_qua, 6, True)
     walk_gyr_filt = filter_quat_lowpass(walk_gyr, fs, fc_imu, 4, False)
 
-    # Filtered data structure
     walk_data_filtered = {'cal': []}
     for i in range(7):
         sensor_data = {
             'quat': walk_quat_filt[i],
-            'acc': walk_acc[i],  # Acceleration not filtered
+            'acc': walk_acc[i],
             'gyr': walk_gyr_filt[i]
         }
         walk_data_filtered['cal'].append(sensor_data)
@@ -246,20 +164,19 @@ def process_gait_data(calib_data, calib_indices, walk_data, walk_indices, swing_
     r_tmp, p_tmp, y_tmp = calculate_joint_angles(walk_quat_filt[6], walk_quat_filt[5], R_SB[6], R_SB[5], seq)
     r.append(r_tmp); p.append(p_tmp); y.append(y_tmp)
 
-    # Map to output structure
     tar = y
     angles = {
-        'aa': -tar[0],  # Affected ankle
-        'ak': tar[1],   # Affected knee
-        'ah': -tar[2],  # Affected hip
-        'na': -tar[3],  # Non-affected ankle
-        'nk': tar[4],   # Non-affected knee
-        'nh': -tar[5]   # Non-affected hip
+        'aa': -tar[0],
+        'ak': tar[1],
+        'ah': -tar[2],
+        'na': -tar[3],
+        'nk': tar[4],
+        'nh': -tar[5]
     }
 
     # Swing detection
     if swing_params is None:
-        set_params = [100, 30, -300, 30, 10]  # Default parameters
+        set_params = [100, 30, -300, 30, 10]
     else:
         set_params = swing_params
     Sw1, Sw2 = swing_detection(walk_data_filtered, set_params)
@@ -327,12 +244,12 @@ def process_gait_data(calib_data, calib_indices, walk_data, walk_indices, swing_
 
     if return_debug:
         output['_debug'] = {
-            'angles': angles,           # raw joint angles time series (dict: aa,ak,ah,na,nk,nh)
-            'swing': swing,             # swing detection signals (dict: af, nf - binary arrays)
-            'step_time_data': step_time_data,  # stride boundaries
-            'foot_acc': {               # foot accelerometer norm signals (for force plot)
-                'af': walk_acc[6],      # affected foot acceleration (sensor 6)
-                'nf': walk_acc[3],      # non-paretic foot acceleration (sensor 3)
+            'angles': angles,
+            'swing': swing,
+            'step_time_data': step_time_data,
+            'foot_acc': {
+                'af': walk_acc[6],
+                'nf': walk_acc[3],
             },
             'time_vec': time_vec,
         }
