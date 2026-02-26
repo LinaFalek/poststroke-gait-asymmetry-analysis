@@ -1,5 +1,3 @@
-
-
 import numpy as np
 from scipy.signal import butter, filtfilt
 from scipy.spatial.transform import Rotation
@@ -42,7 +40,6 @@ def meanquat(Q):
 
     for k in range(N):
         q = Q[k, :].reshape(4, 1)
-        # Ensure sign consistency
         if q[0] < 0:
             q = -q
         A += q @ q.T
@@ -226,10 +223,8 @@ def calculate_joint_angles(sensor_data_prox, sensor_data_dist,
     euler_dist = calibrated_dist.as_euler(seq, degrees=False)
     euler_prox = calibrated_prox.as_euler(seq, degrees=False)
 
-    # Joint angles = proximal - distal
     euler_ang = euler_prox - euler_dist
 
-    # Unwrap and convert to degrees
     roll = np.degrees(np.unwrap(euler_ang[:, 0]))
     pitch = np.degrees(np.unwrap(euler_ang[:, 1]))
     yaw = np.degrees(np.unwrap(euler_ang[:, 2]))
@@ -308,17 +303,14 @@ def process_imu(sensor, set_params):
         # Adjust acceleration (remove gravity)
         a[i, :] = (rot_gs @ acc[i, :] - np.array([0, 0, 9.8]))
 
-        # Compute squared sum for sliding window
         sq_delta = np.sum(delta**2, axis=0)
 
-        # Update sliding window
         delta[0:4, :] = delta[1:5, :]
         delta[4, :] = a[i, :]
 
         # Compute difference measure D
         D[i] = np.sum(sq_delta * np.std(delta, axis=0)) / 5
 
-        # Exponential smoothing
         if i == 0:
             Df[i] = 0
         else:
@@ -352,7 +344,6 @@ def process_imu(sensor, set_params):
         else:
             T_c += 1
 
-        # State machine for phase detection
         if Hto[i] == 1 and flag == 0:
             flag = 1
         else:
@@ -378,9 +369,7 @@ def process_imu(sensor, set_params):
 
 
 def remove_short_pulses(signal, min_length):
-    """
-    Remove pulses shorter than min_length
-    """
+
     signal = signal.flatten()
     clean_signal = signal.copy()
     binary_sig = signal > 0
@@ -401,10 +390,7 @@ def remove_short_pulses(signal, min_length):
 
 
 def separate_step(vector):
-    """
-    Separate step timing from swing signal
-    Returns: step_time_data [stanceStart, stanceEnd, swingEnd]
-    """
+
     min_length = 10
     vector = vector.flatten()
 
@@ -416,7 +402,6 @@ def separate_step(vector):
     if len(rising_edges) < 2 and len(falling_edges) < 2:
         return np.array([])
 
-    # Ensure first falling edge comes before first rising edge
     if len(rising_edges) > 0 and len(falling_edges) > 0:
         if rising_edges[0] < falling_edges[0]:
             rising_edges = rising_edges[1:]
@@ -431,14 +416,12 @@ def separate_step(vector):
     next_falling = np.concatenate([falling_edges[1:], [0]])
     step_time_data = np.column_stack([falling_edges, rising_edges, next_falling])
 
-    # Remove last row if vector ends with falling edge or last next_falling is 0
     if vector[-1] == 0:
         step_time_data = step_time_data[:-1, :]
 
     if len(step_time_data) > 0 and step_time_data[-1, 2] == 0:
         step_time_data = step_time_data[:-1, :]
 
-    # Remove invalid rows
     if len(step_time_data) > 1:
         diff_falling = np.diff(step_time_data[:, 0])
         diff_rising = np.diff(step_time_data[:, 1])
@@ -449,9 +432,7 @@ def separate_step(vector):
 
 
 def resampling(vector, resample_num):
-    """
-    Resample vector to resample_num points
-    """
+
     re_vector = np.zeros(resample_num)
     for i in range(resample_num):
         idx = int(np.round(i * (len(vector) - 1) / (resample_num - 1)))
@@ -460,9 +441,7 @@ def resampling(vector, resample_num):
 
 
 def extracting_cyclic_data(vector, step_time_data, resample_num_st, resample_num_sw):
-    """
-    Extract cyclic gait data normalized to gait cycle percentage
-    """
+
     n_steps = step_time_data.shape[0]
     cyclic_data = np.zeros((n_steps, resample_num_st + resample_num_sw))
 
@@ -479,9 +458,7 @@ def extracting_cyclic_data(vector, step_time_data, resample_num_st, resample_num
 
 
 def extraction_gait_char(step_time_data, data):
-    """
-    Extract gait characteristics (max/min during stance/swing)
-    """
+
     n_steps = step_time_data.shape[0]
 
     maxData_st = np.zeros(n_steps)
@@ -505,9 +482,7 @@ def extraction_gait_char(step_time_data, data):
 
 
 def remove_outliers_and_compute_mean(data, factor=1.5):
-    """
-    Remove outliers using IQR method and compute mean/std
-    """
+
     data = data.flatten()
     Q1 = np.percentile(data, 25)
     Q3 = np.percentile(data, 75)
@@ -518,15 +493,13 @@ def remove_outliers_and_compute_mean(data, factor=1.5):
 
     filtered_data = data[(data >= lower_bound) & (data <= upper_bound)]
     mean_value = np.mean(filtered_data)
-    std_value = np.std(filtered_data, ddof=1)  # Use ddof=1 for sample std
+    std_value = np.std(filtered_data, ddof=1)
 
     return filtered_data, mean_value, std_value
 
 
 def process_struct_fields(data_struct, factor=1.5):
-    """
-    Recursively process struct fields, removing outliers and computing statistics
-    """
+
     result = {}
 
     for key, value in data_struct.items():
