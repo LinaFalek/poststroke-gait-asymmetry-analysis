@@ -38,7 +38,6 @@ CONDITION_PARAMS_PATH = TUNED_DIR / 'condition_params.csv'
 
 
 def load_all_tuned_params():
-    """Load per-condition params if available, else fall back to fine_params."""
     df_fine = pd.read_csv(TUNED_DIR / 'fine_tuning_summary.csv')
     fine = {row['patient_id']: ast.literal_eval(row['fine_params'])
             for _, row in df_fine.iterrows()}
@@ -73,7 +72,6 @@ def load_all_tuned_params():
 
 
 def get_trial_params(params_entry, trial_name):
-    """Pick bare or shoe params based on trial name."""
     if isinstance(params_entry, dict):
         if trial_name in BARE_TRIALS:
             return params_entry['bare']
@@ -101,7 +99,6 @@ def run_trial(trials, indices, trial_name, params):
 
 
 def iqr_filter(data):
-    """Remove outlier strides using IQR on per-stride mean."""
     if data.shape[0] == 0:
         return data
     sm = data.mean(axis=1)
@@ -113,10 +110,7 @@ def iqr_filter(data):
 
 
 def plot_joint_angles(result, patient_id, rdv, trial_name, params, out_path):
-    """
-    3 rows x 2 cols: Hip / Knee / Ankle  x  Affected / Non-paretic
-    Mean +/- std band over IQR-filtered strides.
-    """
+
     cd = result['CycleD']
     T  = cd['T']
     gp = result['GaitParm']
@@ -171,14 +165,7 @@ def plot_joint_angles(result, patient_id, rdv, trial_name, params, out_path):
 
 
 def plot_foot_acceleration(result, patient_id, rdv, trial_name, params, out_path):
-    """
-    4 stacked subplots:
-      - Affected foot |acc| norm  (IMU proxy for ground contact force)
-      - Affected swing signal
-      - Non-paretic foot |acc| norm
-      - Non-paretic swing signal
-    First 20 s of signal shown.
-    """
+
     dbg    = result['_debug']
     swing  = dbg['swing']
     fa_acc = dbg['foot_acc']
@@ -253,9 +240,7 @@ def plot_foot_acceleration(result, patient_id, rdv, trial_name, params, out_path
 
 
 def plot_spatiotemporal(result, patient_id, rdv, trial_name, params, out_path):
-    """
-    2 x 3 grid of bars: one value per parameter, Affected vs Non-paretic.
-    """
+
     gp = result['GaitParm']
 
     param_defs = [
@@ -322,10 +307,7 @@ def plot_spatiotemporal(result, patient_id, rdv, trial_name, params, out_path):
 
 
 def process_one_trial(patient_id, rdv, trial_name, trials, indices, params, force=False):
-    """
-    Generate 3 figures for one patient/RDV/trial.
-    Returns status string.
-    """
+
     trial_dir = OUT_ROOT / patient_id / rdv / trial_name
     trial_dir.mkdir(parents=True, exist_ok=True)
 
