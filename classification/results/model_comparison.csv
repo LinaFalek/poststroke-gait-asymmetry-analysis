@@ -1,0 +1,6 @@
+model,acc,bal_acc
+Logistic Reg,0.9231,0.9444
+SVM Linear,0.9231,0.9444
+Random Forest,0.8462,0.8194
+Naive Bayes,0.9231,0.9097
+SVM Linear (k=18),0.7014,0.7014

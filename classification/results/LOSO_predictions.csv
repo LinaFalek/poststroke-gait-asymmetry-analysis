@@ -1,0 +1,27 @@
+patient_id,true_label,Logistic Reg,SVM Linear,Random Forest,Naive Bayes
+01-P-AR,right,right,right,right,right
+02-P-FN,right,right,right,right,right
+03-P-PJ,left,left,left,left,left
+04-P-CA,left,left,left,left,left
+05-P-GC,left,right,right,right,left
+06-P-PH,left,left,left,left,left
+07-P-KV,right,right,right,left,right
+08-P-KM,left,left,left,left,left
+09-P-TF,right,right,right,right,right
+10-P-RA,left,left,left,left,left
+11-P-BK,left,left,left,left,left
+12-P-KH,left,left,left,left,left
+13-P-CD,right,right,right,right,right
+15-P-TS,left,left,left,left,left
+16-P-GT,left,left,left,left,left
+17-P-MA,right,right,right,right,right
+18-P-EE,right,right,right,right,left
+19-P-CR,left,left,left,left,left
+20-P-NP,left,left,left,left,left
+21-P-NP,left,left,left,left,left
+22-P-OA,left,left,left,left,left
+23-P-GF,right,right,right,left,right
+24-P-SA,left,left,left,left,left
+25-P-LS,left,left,left,left,left
+26-P-AM,left,right,right,right,right
+29-P-DP,left,left,left,left,left
