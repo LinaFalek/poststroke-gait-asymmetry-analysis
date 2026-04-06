@@ -16,7 +16,7 @@ from src.gait_functions import remove_outliers_and_compute_mean
 
 PROJECT_ROOT   = Path(__file__).parent.parent
 OUTPUT_DIR     = PROJECT_ROOT / 'output' / 'hemiparetic_tuned'
-MATLAB_RESULTS = PROJECT_ROOT / 'Kinematics' / 'Dataset' / 'results' / 'hemiparetic'
+REFERENCE_RESULTS = PROJECT_ROOT / 'Kinematics' / 'Dataset' / 'results' / 'hemiparetic'
 
 BARE_TRIALS = ['Bare_fast', 'Bare_pref']
 SHOE_TRIALS = ['Shoe_fast', 'Shoe_pref']
@@ -42,7 +42,7 @@ def _normalize_param_name(s: str) -> str:
 
 def compute_global_refs() -> dict:
     rows = []
-    for patient_dir in MATLAB_RESULTS.iterdir():
+    for patient_dir in REFERENCE_RESULTS.iterdir():
         if not patient_dir.is_dir():
             continue
         for rdv_dir in patient_dir.iterdir():
@@ -108,10 +108,10 @@ def run_pipeline(trials_dict, indices_dict, params, trial_filter):
     return pd.DataFrame(rows) if rows else None
 
 
-def compute_error(py_df, matlab_df):
-    if py_df is None or matlab_df is None or len(py_df) == 0:
+def compute_error(py_df, ref_df):
+    if py_df is None or ref_df is None or len(py_df) == 0:
         return None
-    mdf = matlab_df.copy()
+    mdf = ref_df.copy()
     mdf['Parameter'] = (mdf['Parameter']
                         .str.replace('maxData st',  'maxData_st',  regex=False)
                         .str.replace('maxData sw',  'maxData_sw',  regex=False)
@@ -133,7 +133,7 @@ def compute_error(py_df, matlab_df):
     return merged['rel_diff'].mean()
 
 
-def tune_condition(trials_dict, indices_dict, matlab_df, trial_filter, warm_start=None):
+def tune_condition(trials_dict, indices_dict, ref_df, trial_filter, warm_start=None):
     n_evals = [0]
 
     def objective(x):
@@ -141,7 +141,7 @@ def tune_condition(trials_dict, indices_dict, matlab_df, trial_filter, warm_star
         xc     = clip_to_bounds(x)
         params = [int(round(v)) for v in xc]
         py_df  = run_pipeline(trials_dict, indices_dict, params, trial_filter)
-        err    = compute_error(py_df, matlab_df)
+        err    = compute_error(py_df, ref_df)
         return err if err is not None else 1e6
 
     rng    = np.random.default_rng(42)
@@ -185,21 +185,21 @@ def _worker(args):
     indices_dict = load_index_files(patient_id, 'RDV1')
     trials_dict  = {t['Name']: t for t in re_output}
 
-    matlab_path = MATLAB_RESULTS / patient_id / 'RDV1' / f'{patient_id}_Result.csv'
-    if not matlab_path.exists():
-        log.append(f'  SKIP - no MATLAB reference')
+    ref_path = REFERENCE_RESULTS / patient_id / 'RDV1' / f'{patient_id}_Result.csv'
+    if not ref_path.exists():
+        log.append(f'  SKIP - no reference data')
         return patient_id, None, log
 
-    matlab_df = pd.read_csv(matlab_path)
+    ref_df = pd.read_csv(ref_path)
     warm      = existing_params.get(patient_id)
     results   = {}
 
     for cond, trial_filter in [('bare', BARE_TRIALS), ('shoe', SHOE_TRIALS)]:
-        matlab_trials = set(matlab_df['File'].unique()) if 'File' in matlab_df.columns else set()
-        has_matlab    = any(t in matlab_trials for t in trial_filter)
+        ref_trials = set(ref_df['File'].unique()) if 'File' in ref_df.columns else set()
+        has_reference    = any(t in ref_trials for t in trial_filter)
         has_data      = any(trials_dict.get(t) is not None for t in trial_filter)
 
-        if not has_matlab or not has_data:
+        if not has_reference or not has_data:
             log.append(f'  {cond}: no data/reference -> using existing params')
             results[f'{cond}_params'] = warm
             results[f'{cond}_error']  = None
@@ -207,11 +207,11 @@ def _worker(args):
             continue
 
         params, error, n_ev = tune_condition(
-            trials_dict, indices_dict, matlab_df, trial_filter, warm_start=warm)
+            trials_dict, indices_dict, ref_df, trial_filter, warm_start=warm)
 
         if warm is not None and error is not None:
             warm_err = compute_error(
-                run_pipeline(trials_dict, indices_dict, warm, trial_filter), matlab_df)
+                run_pipeline(trials_dict, indices_dict, warm, trial_filter), ref_df)
             if warm_err is not None and warm_err < error:
                 params = warm
                 error  = warm_err
@@ -244,7 +244,7 @@ def main():
     cli_patients = sys.argv[1:]
     existing     = load_existing_params()
 
-    print('Computing global parameter reference scales from MATLAB data...')
+    print('Computing global parameter reference scales...')
     GLOBAL_REFS = compute_global_refs()
     print(f'  {len(GLOBAL_REFS)} parameters indexed.\n')
 

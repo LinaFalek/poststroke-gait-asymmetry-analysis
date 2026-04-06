@@ -207,7 +207,7 @@ def calculate_joint_angles(sensor_data_prox, sensor_data_dist,
     """
     N = sensor_data_prox.shape[0]
 
-    # Convert to Rotation objects (MATLAB quaternion is [w,x,y,z], scipy is [x,y,z,w])
+    # Convert to Rotation objects (quaternion format [w,x,y,z] to scipy [x,y,z,w])
     q_S_prox = Rotation.from_quat(
         np.column_stack([sensor_data_prox[:, 1:4], sensor_data_prox[:, 0]])
     )
