@@ -193,7 +193,10 @@ def process_gait_data(calib_data, calib_indices, walk_data, walk_indices, swing_
     step_time_data = {
         'af': step_time_data_af,
         'nf': step_time_data_nf,
-        'all': np.vstack([step_time_data_af, step_time_data_nf])
+        'all': np.vstack([
+            step_time_data_af if step_time_data_af.ndim == 2 else step_time_data_af.reshape(0, 3),
+            step_time_data_nf if step_time_data_nf.ndim == 2 else step_time_data_nf.reshape(0, 3),
+        ])
     }
     step_time_data['all'] = step_time_data['all'][np.argsort(step_time_data['all'][:, 0])]
 
@@ -218,17 +221,25 @@ def process_gait_data(calib_data, calib_indices, walk_data, walk_indices, swing_
     St_dur_af = filtered_gait_parm['af']['stanceDuration']['meanValue']
     St_dur_nf = filtered_gait_parm['nf']['stanceDuration']['meanValue']
 
-    nos_st_af = int(np.round(St_dur_af) * mv)
-    nos_sw_af = int((100 - np.round(St_dur_af)) * mv)
-    cyclic_aa = extracting_cyclic_data(angles['aa'], step_time_data_af, nos_st_af, nos_sw_af)
-    cyclic_ak = extracting_cyclic_data(angles['ak'], step_time_data_af, nos_st_af, nos_sw_af)
-    cyclic_ah = extracting_cyclic_data(angles['ah'], step_time_data_af, nos_st_af, nos_sw_af)
+    _empty_cycles = np.empty((0, mv * 100))
 
-    nos_st_nf = int(np.round(St_dur_nf) * mv)
-    nos_sw_nf = int((100 - np.round(St_dur_nf)) * mv)
-    cyclic_na = extracting_cyclic_data(angles['na'], step_time_data_nf, nos_st_nf, nos_sw_nf)
-    cyclic_nk = extracting_cyclic_data(angles['nk'], step_time_data_nf, nos_st_nf, nos_sw_nf)
-    cyclic_nh = extracting_cyclic_data(angles['nh'], step_time_data_nf, nos_st_nf, nos_sw_nf)
+    if np.isnan(St_dur_af) or step_time_data_af.shape[0] == 0:
+        cyclic_aa = cyclic_ak = cyclic_ah = _empty_cycles
+    else:
+        nos_st_af = int(np.round(St_dur_af) * mv)
+        nos_sw_af = int((100 - np.round(St_dur_af)) * mv)
+        cyclic_aa = extracting_cyclic_data(angles['aa'], step_time_data_af, nos_st_af, nos_sw_af)
+        cyclic_ak = extracting_cyclic_data(angles['ak'], step_time_data_af, nos_st_af, nos_sw_af)
+        cyclic_ah = extracting_cyclic_data(angles['ah'], step_time_data_af, nos_st_af, nos_sw_af)
+
+    if np.isnan(St_dur_nf) or step_time_data_nf.shape[0] == 0:
+        cyclic_na = cyclic_nk = cyclic_nh = _empty_cycles
+    else:
+        nos_st_nf = int(np.round(St_dur_nf) * mv)
+        nos_sw_nf = int((100 - np.round(St_dur_nf)) * mv)
+        cyclic_na = extracting_cyclic_data(angles['na'], step_time_data_nf, nos_st_nf, nos_sw_nf)
+        cyclic_nk = extracting_cyclic_data(angles['nk'], step_time_data_nf, nos_st_nf, nos_sw_nf)
+        cyclic_nh = extracting_cyclic_data(angles['nh'], step_time_data_nf, nos_st_nf, nos_sw_nf)
 
     Ti = np.linspace(0, 100, mv * 100)
 
